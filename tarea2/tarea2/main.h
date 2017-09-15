@@ -28,9 +28,10 @@ int (*builtin_funcs[]) (int argc, char** argv) = {
 int builtin_funcs_size = sizeof(builtin_funcs_str) / sizeof(char*);
 
 char* first_prompt = "> Ingrese un comando: ";
-char* prompt = strdup(first_prompt);
+char* prompt = NULL;
 char* next_command = NULL;
 int next_argc = 0;
 char** next_argv = NULL;
+int next_exit_code = EXIT_SUCCESS;
 
 #endif /* main_h */

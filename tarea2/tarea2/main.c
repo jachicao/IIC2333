@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 int exit_(int argc, char** argv)
 {
     return EXIT_FAILURE;
@@ -14,7 +15,31 @@ int setPrompt(int argc, char** argv)
     }
     else
     {
-        
+        int char_size = sizeof(char);
+        char* new_prompt = (char*) malloc(char_size);
+        new_prompt[0] = '\0';
+        for (int i = 1; i < argc; i++)
+        {
+            char* str = argv[i];
+            size_t str1_len = strlen(new_prompt);
+            size_t str2_len = strlen(str);
+            for (int j = 0; j < str2_len; j++)
+            {
+                if (str[j] == '*')
+                {
+                    str[j] = next_exit_code + '0';
+                }
+            }
+            size_t new_size = str1_len + str2_len + 2;
+            new_prompt = (char*) realloc(new_prompt, new_size);
+            memcpy(new_prompt + str1_len, str, str2_len + 1);
+            memcpy(new_prompt + str1_len + str2_len, " ", 1);
+        }
+        if (prompt != NULL)
+        {
+            free(prompt);
+        }
+        prompt = new_prompt;
     }
     return EXIT_SUCCESS;
 }
@@ -38,25 +63,41 @@ int setPath(int argc, char** argv)
 
 int launch(int argc, char** argv)
 {
-    pid_t pid = fork();
-    if (pid == 0) {
-        // Child process
-        if (execvp(argv[0], argv) == -1)
+    char* last_arg = argv[argc - 1];
+    if (last_arg[0] == '&')
+    {
+        if (strlen(last_arg) > 1)
         {
-            perror("lsh");
+            
         }
-        exit(EXIT_FAILURE);
+        else
+        {
+            
+        }
+        return EXIT_SUCCESS;
     }
     else
     {
-        int status;
-        do
+        pid_t pid = fork();
+        if (pid == 0) {
+            // Child process
+            if (execvp(argv[0], argv) == -1)
+            {
+                perror("lsh");
+            }
+            exit(EXIT_FAILURE);
+        }
+        else
         {
-            waitpid(pid, &status, WUNTRACED);
-        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+            int status;
+            do
+            {
+                waitpid(pid, &status, WUNTRACED);
+            } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+        }
+        
+        return EXIT_SUCCESS;
     }
-    
-    return EXIT_SUCCESS;
 }
 
 int execute(int argc, char** argv)
@@ -157,25 +198,30 @@ void free_vars()
     next_argv = NULL;
 }
 
-void on_sigint(int s)
+void on_exit(int s)
 {
-    //free_vars();
-    //exit(EXIT_SUCCESS);
+    free_vars();
+    if (prompt != NULL)
+    {
+        free(prompt);
+    }
+    exit(s);
 }
 
 int main(int argc, char **argv)
 {
-    signal(SIGINT, on_sigint);
-    
-    int exit_code = EXIT_SUCCESS;
-    while (exit_code == EXIT_SUCCESS)
+    prompt = strdup(first_prompt);
+    signal(SIGINT, on_exit);
+    while (next_exit_code == EXIT_SUCCESS)
     {
         printf("%s", prompt);
         next_command = read_next();
         next_argv = split(next_command, &next_argc);
-        exit_code = execute(next_argc, next_argv);
+        next_exit_code = execute(next_argc, next_argv);
         free_vars();
     }
+    
+    on_exit(EXIT_SUCCESS);
     
     return EXIT_SUCCESS;
 }

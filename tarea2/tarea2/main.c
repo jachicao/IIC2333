@@ -233,7 +233,7 @@ void free_vars()
     child_pid = -1;
 }
 
-void on_exit(int s)
+void on_program_exit(int s)
 {
     if (prompt != NULL)
     {
@@ -243,7 +243,7 @@ void on_exit(int s)
     exit(s);
 }
 
-void on_kill(int s)
+void on_program_kill(int s)
 {
     if (child_pid > 0)
     {
@@ -252,13 +252,13 @@ void on_kill(int s)
     }
     else
     {
-        on_exit(s);
+        on_program_exit(s);
     }
 }
 
 int main(int argc, char **argv)
 {
-    signal(SIGINT, on_kill);
+    signal(SIGINT, on_program_kill);
     /*
     struct sigaction sig_handler;
     sig_handler.sa_handler = on_kill;
@@ -277,7 +277,7 @@ int main(int argc, char **argv)
         free_vars();
     }
     
-    on_exit(EXIT_SUCCESS);
+    on_program_exit(EXIT_SUCCESS);
     
     return EXIT_SUCCESS;
 }

@@ -33,5 +33,6 @@ char* next_command = NULL;
 int next_argc = 0;
 char** next_argv = NULL;
 int next_exit_code = EXIT_SUCCESS;
+pid_t child_pid = -1;
 
 #endif /* main_h */

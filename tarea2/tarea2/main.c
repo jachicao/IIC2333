@@ -61,42 +61,76 @@ int setPath(int argc, char** argv)
     return EXIT_SUCCESS;
 }
 
+int launch_in_background(int argc, char** argv)
+{
+    pid_t pid = fork();
+    if (pid == 0)
+    {
+        if (execvp(argv[0], argv) == -1)
+        {
+            perror("msh");
+        }
+        exit(EXIT_FAILURE);
+    }
+    return EXIT_SUCCESS;
+}
+
+int launch_not_in_background(int argc, char** argv)
+{
+    pid_t pid = fork();
+    if (pid == 0)
+    {
+        if (execvp(argv[0], argv) == -1)
+        {
+            perror("msh");
+        }
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        child_pid = pid;
+        int status;
+        waitpid(pid, &status, 0);
+    }
+    
+    return EXIT_SUCCESS;
+
+}
+
 int launch(int argc, char** argv)
 {
     char* last_arg = argv[argc - 1];
     if (last_arg[0] == '&')
     {
-        if (strlen(last_arg) > 1)
+        argv[argc - 1] = NULL;
+        argc--;
+        size_t str_len = strlen(last_arg);
+        if (str_len > 1)
         {
+            char* int_str = (char*) malloc(str_len);
+            for (int i = 1; i < str_len; i++)
+            {
+                int_str[i - 1] = last_arg[i];
+            }
             
+            int N = atoi(int_str);
+            
+            for (int i = 0; i < N; i++)
+            {
+                launch_in_background(argc, argv);
+            }
+            
+            free(int_str);
         }
         else
         {
-            
+            launch_in_background(argc, argv);
         }
         return EXIT_SUCCESS;
     }
     else
     {
-        pid_t pid = fork();
-        if (pid == 0) {
-            // Child process
-            if (execvp(argv[0], argv) == -1)
-            {
-                perror("lsh");
-            }
-            exit(EXIT_FAILURE);
-        }
-        else
-        {
-            int status;
-            do
-            {
-                waitpid(pid, &status, WUNTRACED);
-            } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-        }
-        
-        return EXIT_SUCCESS;
+        return launch_not_in_background(argc, argv);
     }
 }
 
@@ -120,7 +154,7 @@ int execute(int argc, char** argv)
 
 char** split(char* command, int* size)
 {
-    char* separator = " ";
+    char* separator = " \t\r\n\a";
     int char_size = sizeof(char*);
     char** args = (char**) malloc(char_size);
     if (args == NULL)
@@ -196,22 +230,44 @@ void free_vars()
     next_command = NULL;
     next_argc = 0;
     next_argv = NULL;
+    child_pid = -1;
 }
 
 void on_exit(int s)
 {
-    free_vars();
     if (prompt != NULL)
     {
         free(prompt);
     }
+    free_vars();
     exit(s);
+}
+
+void on_kill(int s)
+{
+    if (child_pid > 0)
+    {
+        kill(child_pid, SIGTERM);
+        free_vars();
+    }
+    else
+    {
+        on_exit(s);
+    }
 }
 
 int main(int argc, char **argv)
 {
+    signal(SIGINT, on_kill);
+    /*
+    struct sigaction sig_handler;
+    sig_handler.sa_handler = on_kill;
+    sigemptyset(&sig_handler.sa_mask);
+    sig_handler.sa_flags = 0;
+    sigaction(SIGINT, &sig_handler, NULL);
+    */
+    
     prompt = strdup(first_prompt);
-    signal(SIGINT, on_exit);
     while (next_exit_code == EXIT_SUCCESS)
     {
         printf("%s", prompt);

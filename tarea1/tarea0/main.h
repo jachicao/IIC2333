@@ -1,11 +1,3 @@
-//
-//  main.h
-//  tarea0
-//
-//  Created by Javier on 8/18/17.
-//  Copyright © 2017 Javier. All rights reserved.
-//
-
 #ifndef main_h
 #define main_h
 

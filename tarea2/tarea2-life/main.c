@@ -1,5 +1,16 @@
 #include "main.h"
 
+// Shared memory
+void* shared_memory_alloc(size_t size)
+{
+    return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
+}
+
+void shared_memory_free(void* shared, size_t size)
+{
+    munmap(shared, size);
+}
+
 bool is_alive(int** array, int m, int n, int i, int j)
 {
     return i > -1 && i < m && j > -1 && j < n && array[i][j];
@@ -101,6 +112,149 @@ int** two_d_array_copy_int(int** array, int m, int n)
     return new_array;
 }
 
+Worker* worker_create()
+{
+    Worker* new_worker = (Worker*) malloc(sizeof(Worker));
+    new_worker -> array = two_d_array_copy_int(global_master -> array, global_master -> height, global_master -> width);
+    new_worker -> pid = -1;
+    new_worker -> status = -1;
+    return new_worker;
+}
+
+void worker_destroy(Worker* worker)
+{
+    two_d_array_destroy_int(worker -> array, global_master -> height, global_master -> width);
+    free(worker);
+}
+
+void worker_finished(Worker* worker)
+{
+    //kill the rest
+    for (int i = 0; i < global_master -> workers_length; i++)
+    {
+        Worker* w = global_master -> workers[i];
+        if (w != NULL && worker -> pid != w -> pid)
+        {
+            kill(w -> pid, SIGTERM);
+        }
+    }
+    master_finished(global_master, worker);
+    exit(EXIT_SUCCESS);
+}
+
+void* worker_thread_exec(void* arg)
+{
+    struct thread_args_t* thread_args = arg;
+    thread_args -> new_array[thread_args -> i][thread_args -> j] = get_new_state(thread_args -> old_array, global_master -> height, global_master -> width, thread_args -> i, thread_args -> j);
+    pthread_exit(0);
+    return NULL;
+}
+
+void worker_exec(Worker* worker)
+{
+    for (int iteration = 0; iteration < global_master -> iterations; iteration++)
+    {
+        int** tmp_array = two_d_array_copy_int(worker -> array, global_master -> height, global_master -> width);
+        int index = 0;
+        pthread_t threads[global_master -> threads];
+        int i = 0;
+        int j = 0;
+        while (i < global_master -> height && j < global_master -> width)
+        {
+            ThreadArgs thread_args;
+            thread_args.old_array = worker -> array;
+            thread_args.new_array = tmp_array;
+            thread_args.i = i;
+            thread_args.j = j;
+            int n = index%global_master -> threads;
+            pthread_create(&threads[n], NULL, worker_thread_exec, &thread_args);
+            pthread_join(threads[n], NULL);
+            j++;
+            if (j >= global_master -> width)
+            {
+                j = 0;
+                i++;
+            }
+            index++;
+        }
+        for(int i = 0; i < global_master -> height; i++)
+        {
+            for (int j = 0; j < global_master -> width; j++)
+            {
+                worker -> array[i][j] = tmp_array[i][j];
+            }
+        }
+        two_d_array_destroy_int(tmp_array, global_master -> height, global_master -> width);
+        master_worker_notification(global_master, worker);
+    }
+    worker_finished(worker);
+}
+
+Master* master_create(int** array, int iterations, int height, int width, int alive_counter, int threads, int workers_length)
+{
+    Master* new_master = (Master*) shared_memory_alloc(sizeof(Master));
+    new_master -> array = array;
+    new_master -> iterations = iterations;
+    new_master -> height = height;
+    new_master -> width = width;
+    new_master -> alive_counter = alive_counter;
+    new_master -> threads = threads;
+    new_master -> workers_length = workers_length;
+    new_master -> finished = false;
+    new_master -> workers = (Worker**) malloc(new_master -> workers_length * sizeof(Worker*));
+    for (int i = 0; i < new_master -> workers_length; i++)
+    {
+        new_master -> workers[i] = NULL;
+    }
+    return new_master;
+}
+
+void master_destroy(Master* master)
+{
+    for (int i = 0; i < master -> workers_length; i++)
+    {
+        Worker* worker = master -> workers[i];
+        if (worker != NULL)
+        {
+            worker_destroy(worker);
+        }
+    }
+    free(master -> workers);
+    
+    two_d_array_destroy_int(master -> array, master -> height, master -> width);
+    shared_memory_free(master, sizeof(Master));
+}
+
+void master_worker_notification(Master* master, Worker* worker)
+{
+    // worker has notified me the current status
+}
+
+void master_finished(Master* master, Worker* worker)
+{
+    master -> finished = true;
+    for(int i = 0; i < master -> height; i++)
+    {
+        for (int j = 0; j < master -> width; j++)
+        {
+            master -> array[i][j] = worker -> array[i][j];
+        }
+    }
+    for (int i = 0; i < global_master -> height; i++)
+    {
+        for (int j = 0; j < global_master -> width; j++)
+        {
+            printf("%d", global_master -> array[i][j]);
+            if (j < global_master -> width - 1)
+            {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+    master_destroy(global_master);
+}
+
 int main(int argc, const char * argv[])
 {
     if (argc < 2)
@@ -114,6 +268,7 @@ int main(int argc, const char * argv[])
         printf("Failed to read file");
         return EXIT_SUCCESS;
     }
+    
     int t, f, c, v, n;
     fscanf(file, "%d %d %d %d %d", &t, &f, &c, &v, &n);
     int** array = two_d_array_init_int(f, c);
@@ -124,42 +279,23 @@ int main(int argc, const char * argv[])
         fscanf(file, "%d %d", &x, &y);
         array[x][y] = 1;
     }
-    
     fclose(file);
-    
-    for (int iteration = 0; iteration < t; iteration++)
+    size_t cpu_cores = sysconf(_SC_NPROCESSORS_ONLN);
+    global_master = master_create(array, t, f, c, v, n, (int) cpu_cores);
+    for (int i = 0; i < global_master -> workers_length && !global_master -> finished; i++)
     {
-        int** temp_array = two_d_array_init_int(f, c);
-        for (int i = 0; i < f; i++)
+        Worker* worker = worker_create();
+        global_master -> workers[i] = worker;
+        pid_t pid = fork();
+        if (pid == 0)
         {
-            for (int j = 0; j < c; j++)
-            {
-                temp_array[i][j] = get_new_state(array, f, c, i, j);
-            }
+            worker_exec(worker);
         }
-        for (int i = 0; i < f; i++)
+        else
         {
-            for (int j = 0; j < c; j++)
-            {
-                array[i][j] = temp_array[i][j];
-            }
+            worker -> pid = pid;
+            waitpid(worker -> pid, &(worker -> status), 0);
         }
-        two_d_array_destroy_int(temp_array, f, c);
     }
-    
-    for (int i = 0; i < f; i++)
-    {
-        for (int j = 0; j < c; j++)
-        {
-            printf("%d", array[i][j]);
-            if (j < c - 1)
-            {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }
-    
-    two_d_array_destroy_int(array, f, c);
     return 0;
 }

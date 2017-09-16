@@ -152,11 +152,11 @@ void* worker_thread_exec(void* arg)
 
 void worker_exec(Worker* worker)
 {
+    pthread_t threads[global_master -> threads];
     for (int iteration = 0; iteration < global_master -> iterations; iteration++)
     {
         int** tmp_array = two_d_array_copy_int(worker -> array, global_master -> height, global_master -> width);
         int index = 0;
-        pthread_t threads[global_master -> threads];
         int i = 0;
         int j = 0;
         while (i < global_master -> height && j < global_master -> width)
@@ -166,9 +166,14 @@ void worker_exec(Worker* worker)
             thread_args.new_array = tmp_array;
             thread_args.i = i;
             thread_args.j = j;
+            //we assign a cell to each node
             int n = index%global_master -> threads;
             pthread_create(&threads[n], NULL, worker_thread_exec, &thread_args);
-            pthread_join(threads[n], NULL);
+            //if thread is busy, we wait until it gets free
+            if (pthread_kill(threads[n], 0) == 0)
+            {
+                pthread_join(threads[n], NULL);
+            }
             j++;
             if (j >= global_master -> width)
             {

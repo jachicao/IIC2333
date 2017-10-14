@@ -25,8 +25,9 @@ PhysicalMemoryQueue* physical_memory_queue_create(int max_size) {
 void physical_memory_queue_destroy(PhysicalMemoryQueue* queue) {
     PhysicalMemoryNode* node = queue -> front;
     while(node != NULL) {
+        PhysicalMemoryNode* next = node -> next;
         physical_memory_node_destroy(node);
-        node = node -> next;
+        node = next;
     }
     free(queue);
 }

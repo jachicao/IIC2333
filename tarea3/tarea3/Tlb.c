@@ -25,8 +25,9 @@ TlbQueue* tlb_queue_create(int max_size) {
 void tlb_queue_destroy(TlbQueue* queue) {
     TlbNode* node = queue -> front;
     while(node != NULL) {
+        TlbNode* next = node -> next;
         tlb_node_destroy(node);
-        node = node -> next;
+        node = next;
     }
     free(queue);
 }

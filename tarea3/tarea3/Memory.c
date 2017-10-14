@@ -20,12 +20,15 @@ unsigned char memory_virtual_read(Memory* memory, int memory_address) {
     int page = (memory_address >> OFFSET_BITS) & PAGE_MASK;
     //printf("Offset: %d, page: %d\n", offset, page);
     int frame = tlb_get(memory -> tlb, page);
+    global_statistics -> tlb_tries++;
+    global_statistics -> page_tries++;
     unsigned char* bytes = NULL;
     if (frame == -1) {
         //hit miss
         //printf("Hit miss\n");
         frame = page_table_get_from_page(memory -> page_table, page);
         if (frame == -1) {
+            global_statistics -> page_faults++;
             //printf("Page fault\n");
             // page fault
             FILE* file = fopen(DISK_FILE_NAME, "r");
@@ -39,7 +42,10 @@ unsigned char memory_virtual_read(Memory* memory, int memory_address) {
                 frame = physical_memory_add(memory -> physical_memory, bytes, &prev_frame);
                 if (prev_frame > -1) {
                     // frame replaced
-                    page_table_remove_frame(memory -> page_table, prev_frame);
+                    int prev_page = page_table_get_from_frame(memory -> page_table, prev_frame);
+                    //printf("Remove page: %d, frame: %d\n", prev_page, prev_frame);
+                    page_table_remove_page(memory -> page_table, prev_page);
+                    tlb_remove(memory -> tlb, prev_page);
                 }
                 page_table_add(memory -> page_table, page, frame);
                 tlb_add(memory -> tlb, page, frame);
@@ -52,6 +58,7 @@ unsigned char memory_virtual_read(Memory* memory, int memory_address) {
             tlb_add(memory -> tlb, page, frame);
         }
     } else {
+        global_statistics -> tlb_hits++;
     }
     return physical_memory_get(memory -> physical_memory, frame, offset);
 }

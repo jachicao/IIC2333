@@ -33,9 +33,10 @@ TlbQueue* tlb_queue_create(int max_size);
 void tlb_queue_destroy(TlbQueue* queue);
 bool tlb_queue_is_empty(TlbQueue* queue);
 bool tlb_queue_is_full(TlbQueue* queue);
-TlbNode* tlb_queue_dequeue(TlbQueue* queue);
-TlbNode* tlb_queue_enqueue(TlbQueue* queue, TlbNode* node);
+TlbNode* tlb_queue_enqueue(TlbQueue* queue, TlbNode* node, enum policy_type policy);
 void tlb_queue_put_at_front(TlbQueue* queue, TlbNode* node);
+TlbNode* tlb_queue_remove_front(TlbQueue* queue);
+TlbNode* tlb_queue_remove_rear(TlbQueue* queue);
 
 typedef struct TlbDictionary
 {
@@ -60,9 +61,10 @@ typedef struct Tlb
 
 Tlb* tlb_create(enum policy_type policy);
 void tlb_destroy(Tlb* tlb);
-bool tlb_contains(Tlb* tlb, int page);
 void tlb_add(Tlb* tlb, int page, int frame);
 int tlb_get(Tlb* tlb, int page);
+void tlb_remove(Tlb* tlb, int page);
+void tlb_print(Tlb* tlb);
 
 #endif /* Tlb_h */
 

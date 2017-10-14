@@ -51,11 +51,9 @@ void page_table_add(PageTable* page_table, int page, int frame) {
 }
 
 int page_table_get_from_page(PageTable* page_table, int page) {
-    global_statistics -> page_tries++;
     if (page_table_dictionary_contains(page_table -> dictionary, page)) {
         return page_table_dictionary_get(page_table -> dictionary, page);
     } else {
-        global_statistics -> page_faults++;
         return -1;
     }
 }
@@ -69,9 +67,18 @@ int page_table_get_from_frame(PageTable* page_table, int frame) {
     return -1;
 }
 
-
-void page_table_remove_frame(PageTable* page_table, int frame) {
-    int page = page_table_get_from_frame(page_table, frame);
-    printf("Remove page: %d, frame: %d\n", page, frame);
+void page_table_remove_page(PageTable* page_table, int page) {
     page_table_dictionary_remove(page_table -> dictionary, page);
+}
+
+void page_table_print(PageTable* page_table) {
+    printf("TABLA DE PAGINAS\n");
+    printf("page\tframe\n");
+    for (int i = 0; i < page_table -> dictionary -> size; i++) {
+        if (page_table_dictionary_contains(page_table -> dictionary, i)) {
+            printf("%d\t%d\n", i, page_table_dictionary_get(page_table -> dictionary, i));
+        } else {
+            printf("%d\n", i);
+        }
+    }
 }

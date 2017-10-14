@@ -2,35 +2,10 @@
 
 void on_destroy(int s) {
     keep_scanning = false;
-    float fault_percentage = 100 * ((double)global_statistics -> page_faults) / ((double)global_statistics -> page_tries);
-    printf("PORCENTAJE_PAGE_FAULTS = %f", fault_percentage);
-    printf("%%");
-    printf("\n");
-    float hit_percentage = 100 * ((double)global_statistics -> tlb_hits) / ((double)global_statistics -> tlb_tries);
-    printf("PORCENTAJE_TLB_HITS = %f", hit_percentage);
-    printf("%%");
-    printf("\n");
-    printf("TABLA DE PAGINAS\n");
-    printf("page\tframe\n");
-    for (int i = 0; i < global_memory -> page_table -> dictionary -> size; i++) {
-        if (page_table_dictionary_contains(global_memory -> page_table -> dictionary, i)) {
-            printf("%d\t%d\n", i, page_table_dictionary_get(global_memory -> page_table -> dictionary, i));
-        } else {
-            printf("%d\n", i);
-        }
-    }
-    printf("TLB\n");
-    printf("i\tpage\tframe\n");
-    int counter = 0;
-    TlbNode* node = global_memory -> tlb -> queue -> front;
-    while (node != NULL) {
-        printf("%d\t%d\t%d\n", counter, node -> page, node -> frame);
-        node = node -> next;
-        counter++;
-    }
-    for (int i = counter; i < global_memory -> tlb -> queue -> max_size; i++) {
-        printf("%d\n", i);
-    }
+    statistics_print(global_statistics);
+    page_table_print(global_memory -> page_table);
+    tlb_print(global_memory -> tlb);
+    //physical_memory_print(global_memory -> physical_memory);
     if (global_memory != NULL) {
         memory_destroy(global_memory);
     }

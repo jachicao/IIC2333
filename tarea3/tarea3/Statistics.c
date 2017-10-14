@@ -12,3 +12,14 @@ Statistics* statistics_create(void) {
 void statistics_destroy(Statistics* statistics) {
     free(statistics);
 }
+
+void statistics_print(Statistics* statistics) {
+    float fault_percentage = 100 * ((double)statistics -> page_faults) / ((double)statistics -> page_tries);
+    printf("PORCENTAJE_PAGE_FAULTS = %f", fault_percentage);
+    printf("%%");
+    printf("\n");
+    float hit_percentage = 100 * ((double)statistics -> tlb_hits) / ((double)statistics -> tlb_tries);
+    printf("PORCENTAJE_TLB_HITS = %f", hit_percentage);
+    printf("%%");
+    printf("\n");
+}

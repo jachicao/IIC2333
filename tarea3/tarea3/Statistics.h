@@ -1,6 +1,7 @@
 #ifndef Statistics_h
 #define Statistics_h
 
+#include <stdio.h>
 #include <stdlib.h>
 
 typedef struct Statistics
@@ -13,5 +14,6 @@ typedef struct Statistics
 
 Statistics* statistics_create(void);
 void statistics_destroy(Statistics* statistics);
+void statistics_print(Statistics* statistics);
 
 #endif /* Statistics_h */

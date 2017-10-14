@@ -33,34 +33,21 @@ void physical_memory_queue_destroy(PhysicalMemoryQueue* queue) {
 }
 
 bool physical_memory_queue_is_empty(PhysicalMemoryQueue* queue) {
-    return queue -> front == NULL;
+    return queue -> current_size == 0;
 }
 
 bool physical_memory_queue_is_full(PhysicalMemoryQueue* queue) {
     return queue -> current_size == queue -> max_size;
 }
 
-PhysicalMemoryNode* physical_memory_queue_dequeue(PhysicalMemoryQueue* queue) {
-    if (!physical_memory_queue_is_empty(queue)) {
-        if (queue -> front == queue -> rear) {
-            queue -> front = NULL;
-        }
-        PhysicalMemoryNode* temp = queue -> front;
-        queue -> front = queue -> front -> next;
-        
-        if (queue -> front != NULL) {
-            queue -> front -> prev = NULL;
-        }
-        queue -> current_size--;
-        return temp;
-    }
-    return NULL;
-}
-
-PhysicalMemoryNode* physical_memory_queue_enqueue(PhysicalMemoryQueue* queue, PhysicalMemoryNode* node) {
+PhysicalMemoryNode* physical_memory_queue_enqueue(PhysicalMemoryQueue* queue, PhysicalMemoryNode* node, enum policy_type policy) {
     PhysicalMemoryNode* prev = NULL;
     if (physical_memory_queue_is_full(queue)) {
-        prev = physical_memory_queue_dequeue(queue);
+        if (policy == LRU) {
+            prev = physical_memory_queue_remove_rear(queue);
+        } else {
+            prev = physical_memory_queue_remove_front(queue);
+        }
     }
     node -> prev = queue -> rear;
     if (physical_memory_queue_is_empty(queue)) {
@@ -92,6 +79,33 @@ void physical_memory_queue_put_at_front(PhysicalMemoryQueue* queue, PhysicalMemo
     }
 }
 
+PhysicalMemoryNode* physical_memory_queue_remove_front(PhysicalMemoryQueue* queue) {
+    if (!physical_memory_queue_is_empty(queue)) {
+        PhysicalMemoryNode* temp = queue -> front;
+        queue -> front = queue -> front -> next;
+        
+        if (queue -> front != NULL) {
+            queue -> front -> prev = NULL;
+        }
+        queue -> current_size--;
+        return temp;
+    }
+    return NULL;
+}
+
+PhysicalMemoryNode* physical_memory_queue_remove_rear(PhysicalMemoryQueue* queue) {
+    if (!physical_memory_queue_is_empty(queue)) {
+        PhysicalMemoryNode* temp = queue -> rear;
+        queue -> rear = queue -> rear -> prev;
+        
+        if (queue -> rear != NULL) {
+            queue -> rear -> next = NULL;
+        }
+        queue -> current_size--;
+        return temp;
+    }
+    return NULL;
+}
 
 PhysicalMemoryDictionary* physical_memory_dictionary_create(int size) {
     PhysicalMemoryDictionary* dictionary = (PhysicalMemoryDictionary*) malloc(sizeof(PhysicalMemoryDictionary));
@@ -142,14 +156,10 @@ void physical_memory_destroy(PhysicalMemory* physical_memory) {
     free(physical_memory);
 }
 
-bool physical_memory_contains(PhysicalMemory* physical_memory, int frame) {
-    return physical_memory_dictionary_contains(physical_memory -> dictionary, frame);
-}
-
 int physical_memory_add(PhysicalMemory* physical_memory, unsigned char* bytes, int* prev_frame) {
     int frame = physical_memory -> queue -> current_size;
     PhysicalMemoryNode* node = physical_memory_node_create(bytes);
-    PhysicalMemoryNode* prev = physical_memory_queue_enqueue(physical_memory -> queue, node);
+    PhysicalMemoryNode* prev = physical_memory_queue_enqueue(physical_memory -> queue, node, physical_memory -> policy);
     if (prev != NULL) {
         // full
         frame = prev -> frame;
@@ -170,8 +180,21 @@ char physical_memory_get(PhysicalMemory* physical_memory, int frame, int offset)
     PhysicalMemoryNode* node = physical_memory_dictionary_get(physical_memory -> dictionary, frame);
     if (node == NULL) {
         //PAGE FAULT
+        printf("Page fault, this shouldnt happen");
     } else if (physical_memory -> policy == LRU) {
         physical_memory_queue_put_at_front(physical_memory -> queue, node);
     }
     return node -> bytes[offset];
+}
+
+void physical_memory_print(PhysicalMemory* physical_memory) {
+    printf("PhysicalMemory\n");
+    printf("i\tframe\n");
+    int counter = 0;
+    PhysicalMemoryNode* node = physical_memory -> queue -> front;
+    while (node != NULL) {
+        printf("%d\t%d\n", counter, node -> frame);
+        node = node -> next;
+        counter++;
+    }
 }

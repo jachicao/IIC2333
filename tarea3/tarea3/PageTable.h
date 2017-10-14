@@ -31,7 +31,9 @@ typedef struct PageTable
 
 PageTable* page_table_create(void);
 void page_table_destroy(PageTable* page_table);
-int page_table_get(PageTable* page_table, int page);
+void page_table_add(PageTable* page_table, int page, int frame);
+int page_table_get_from_page(PageTable* page_table, int page);
+int page_table_get_from_frame(PageTable* page_table, int frame);
 void page_table_remove_frame(PageTable* page_table, int frame);
 
 #endif /* PageTable_h */

@@ -17,6 +17,6 @@ Statistics* global_statistics = NULL;
 bool keep_scanning = true;
 
 int main(int argc, const char * argv[]);
-void on_sigquit(int s);
+void on_destroy(int s);
 
 #endif /* main_h */

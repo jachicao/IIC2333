@@ -23,16 +23,16 @@ TlbQueue* tlb_queue_create(int max_size) {
 }
 
 void tlb_queue_destroy(TlbQueue* queue) {
-    TlbNode* node = queue -> rear;
+    TlbNode* node = queue -> front;
     while(node != NULL) {
         tlb_node_destroy(node);
-        node = node -> prev;
+        node = node -> next;
     }
     free(queue);
 }
 
 bool tlb_queue_is_empty(TlbQueue* queue) {
-    return queue -> rear == NULL;
+    return queue -> front == NULL;
 }
 
 bool tlb_queue_is_full(TlbQueue* queue) {
@@ -44,11 +44,11 @@ TlbNode* tlb_queue_dequeue(TlbQueue* queue) {
         if (queue -> front == queue -> rear) {
             queue -> front = NULL;
         }
-        TlbNode* temp = queue -> rear;
-        queue -> rear = queue -> rear -> prev;
+        TlbNode* temp = queue -> front;
+        queue -> front = queue -> front -> next;
         
-        if (queue -> rear != NULL) {
-            queue -> rear -> next = NULL;
+        if (queue -> front != NULL) {
+            queue -> front -> prev = NULL;
         }
         queue -> current_size--;
         return temp;
@@ -61,16 +61,34 @@ TlbNode* tlb_queue_enqueue(TlbQueue* queue, TlbNode* node) {
     if (tlb_queue_is_full(queue)) {
         prev = tlb_queue_dequeue(queue);
     }
-    node -> next = queue -> front;
+    node -> prev = queue -> rear;
     if (tlb_queue_is_empty(queue)) {
         queue -> rear = node;
         queue -> front = node;
     } else {
-        queue -> front -> prev = node;
-        queue -> front = node;
+        queue -> rear -> next = node;
+        queue -> rear = node;
     }
     queue -> current_size++;
     return prev;
+}
+
+void tlb_queue_put_at_front(TlbQueue* queue, TlbNode* node) {
+    if (node != queue -> front) {
+        node -> prev -> next = node -> next;
+        if (node -> next != NULL) {
+            node -> next -> prev = node -> prev;
+        }
+        if (node == queue -> rear) {
+            queue -> rear = node -> prev;
+            queue -> rear -> next = NULL;
+        }
+        node -> next = queue -> front;
+        node -> prev = NULL;
+        
+        node -> next -> prev = node;
+        queue -> front = node;
+    }
 }
 
 TlbDictionary* tlb_dictionary_create(int size) {
@@ -135,32 +153,18 @@ void tlb_add(Tlb* tlb, int page, int frame) {
         tlb_node_destroy(prev);
     }
     tlb_dictionary_add(tlb -> dictionary, node -> page, node);
+    if (tlb -> policy == LRU) {
+        tlb_queue_put_at_front(tlb -> queue, node);
+    }
 }
 
 int tlb_get(Tlb* tlb, int page) {
     TlbNode* node = tlb_dictionary_get(tlb -> dictionary, page);
     global_statistics -> tlb_tries++;
     if (node == NULL) {
-        int frame = 0;
-        //int frame = page_table_get(global_memory -> page_table, page);
-        tlb_add(tlb, page, frame);
-        return frame;
-    } else if (node != tlb -> queue -> front) {
-        if (tlb -> policy == LRU) {
-            node -> prev -> next = node -> next;
-            if (node -> next != NULL) {
-                node -> next -> prev = node -> prev;
-            }
-            if (node == tlb -> queue -> rear) {
-                tlb -> queue -> rear = node -> prev;
-                tlb -> queue -> rear -> next = NULL;
-            }
-            node -> next = tlb -> queue -> front;
-            node -> prev = NULL;
-            
-            node -> next -> prev = node;
-            tlb -> queue -> front = node;
-        }
+        return -1;
+    } else if (tlb -> policy == LRU) {
+        tlb_queue_put_at_front(tlb -> queue, node);
     }
     global_statistics -> tlb_hits++;
     return node -> frame;

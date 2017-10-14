@@ -19,7 +19,7 @@ typedef struct Memory
 
 Memory* memory_create(enum policy_type policy);
 void memory_destroy(Memory* memory);
-int memory_virtual_read(Memory* memory, int memory_address);
+unsigned char memory_virtual_read(Memory* memory, int memory_address);
 
 #endif /* Memory_h */
 

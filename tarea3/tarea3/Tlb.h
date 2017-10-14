@@ -34,8 +34,8 @@ void tlb_queue_destroy(TlbQueue* queue);
 bool tlb_queue_is_empty(TlbQueue* queue);
 bool tlb_queue_is_full(TlbQueue* queue);
 TlbNode* tlb_queue_dequeue(TlbQueue* queue);
-
 TlbNode* tlb_queue_enqueue(TlbQueue* queue, TlbNode* node);
+void tlb_queue_put_at_front(TlbQueue* queue, TlbNode* node);
 
 typedef struct TlbDictionary
 {
@@ -49,6 +49,7 @@ bool tlb_dictionary_contains(TlbDictionary* dictionary, int key);
 TlbNode* tlb_dictionary_add(TlbDictionary* dictionary, int key, TlbNode* node);
 TlbNode* tlb_dictionary_remove(TlbDictionary* dictionary, int key);
 TlbNode* tlb_dictionary_get(TlbDictionary* dictionary, int key);
+
 
 typedef struct Tlb
 {

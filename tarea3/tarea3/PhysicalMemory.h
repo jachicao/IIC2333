@@ -30,6 +30,7 @@ bool physical_memory_queue_is_empty(PhysicalMemoryQueue* queue);
 bool physical_memory_queue_is_full(PhysicalMemoryQueue* queue);
 PhysicalMemoryNode* physical_memory_queue_dequeue(PhysicalMemoryQueue* queue);
 PhysicalMemoryNode* physical_memory_queue_enqueue(PhysicalMemoryQueue* queue, PhysicalMemoryNode* node);
+void physical_memory_queue_put_at_front(PhysicalMemoryQueue* queue, PhysicalMemoryNode* node);
 
 typedef struct PhysicalMemoryDictionary
 {
@@ -55,7 +56,7 @@ typedef struct PhysicalMemory
 PhysicalMemory* physical_memory_create(enum policy_type policy);
 void physical_memory_destroy(PhysicalMemory* physical_memory);
 bool physical_memory_contains(PhysicalMemory* physical_memory, int frame);
-int physical_memory_add(PhysicalMemory* physical_memory, unsigned char* bytes);
+int physical_memory_add(PhysicalMemory* physical_memory, unsigned char* bytes, int* prev_frame);
 char physical_memory_get(PhysicalMemory* physical_memory, int frame, int offset);
 
 #endif /* PhysicalMemory_h */

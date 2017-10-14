@@ -15,6 +15,43 @@ void memory_destroy(Memory* memory) {
     tlb_destroy(memory -> tlb);
     free(memory);
 }
-int memory_virtual_read(Memory* memory, int memory_address) {
-    return 0;
+unsigned char memory_virtual_read(Memory* memory, int memory_address) {
+    int offset = memory_address & OFFSET_MASK;
+    int page = (memory_address >> OFFSET_BITS) & PAGE_MASK;
+    //printf("Offset: %d, page: %d\n", offset, page);
+    int frame = tlb_get(memory -> tlb, page);
+    unsigned char* bytes = NULL;
+    if (frame == -1) {
+        //hit miss
+        //printf("Hit miss\n");
+        frame = page_table_get_from_page(memory -> page_table, page);
+        if (frame == -1) {
+            //printf("Page fault\n");
+            // page fault
+            FILE* file = fopen(DISK_FILE_NAME, "r");
+            if (file != NULL) {
+                int page_position = 0 + page * OFFSET_SIZE;
+                fseek(file, page_position, SEEK_SET);
+                bytes = (unsigned char*) malloc(OFFSET_SIZE);
+                fread(bytes, 1, OFFSET_SIZE, file);
+                fclose(file);
+                int prev_frame = -1;
+                frame = physical_memory_add(memory -> physical_memory, bytes, &prev_frame);
+                if (prev_frame > -1) {
+                    // frame replaced
+                    page_table_remove_frame(memory -> page_table, prev_frame);
+                }
+                page_table_add(memory -> page_table, page, frame);
+                tlb_add(memory -> tlb, page, frame);
+                return bytes[offset];
+            } else {
+                printf("Failed to read file");
+                exit(1);
+            }
+        } else {
+            tlb_add(memory -> tlb, page, frame);
+        }
+    } else {
+    }
+    return physical_memory_get(memory -> physical_memory, frame, offset);
 }

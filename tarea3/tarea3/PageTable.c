@@ -46,40 +46,32 @@ void page_table_destroy(PageTable* page_table) {
     free(page_table);
 }
 
-int page_table_get(PageTable* page_table, int page) {
+void page_table_add(PageTable* page_table, int page, int frame) {
+    page_table_dictionary_add(page_table -> dictionary, page, frame);
+}
+
+int page_table_get_from_page(PageTable* page_table, int page) {
     global_statistics -> page_tries++;
     if (page_table_dictionary_contains(page_table -> dictionary, page)) {
         return page_table_dictionary_get(page_table -> dictionary, page);
     } else {
-        // page fault
         global_statistics -> page_faults++;
-        printf("Swap in");
-        FILE* file = fopen(DISK_FILE_NAME, "r");
-        if (file != NULL) {
-            int page_position = 0 + page * OFFSET_SIZE;
-            fseek(file, page_position, SEEK_SET);
-            unsigned char* bytes = (unsigned char*) malloc(OFFSET_SIZE);
-            fread(&bytes, 1, OFFSET_SIZE, file);
-            fclose(file);
-            int frame = 0;
-            //int frame = physical_memory_add(global_memory -> physical_memory, bytes);
-            //page_table_dictionary_add(page_table -> dictionary, page, frame);
-            return frame;
-        } else {
-            printf("Failed to read file");
-            exit(1);
-        }
+        return -1;
     }
-    return 0;
 }
 
-void page_table_remove_frame(PageTable* page_table, int frame) {
-    int page = 0;
+int page_table_get_from_frame(PageTable* page_table, int frame) {
     for (int i = 0; i < page_table -> dictionary -> size; i++) {
         if (frame == page_table_dictionary_get(page_table -> dictionary, i)) {
-            page = i;
-            break;
+            return i;
         }
     }
+    return -1;
+}
+
+
+void page_table_remove_frame(PageTable* page_table, int frame) {
+    int page = page_table_get_from_frame(page_table, frame);
+    printf("Remove page: %d, frame: %d\n", page, frame);
     page_table_dictionary_remove(page_table -> dictionary, page);
 }

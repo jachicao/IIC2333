@@ -1,6 +1,6 @@
 #include "Statistics.h"
 
-Statistics* statistics_create() {
+Statistics* statistics_create(void) {
     Statistics* statistics = (Statistics*) malloc(sizeof(Statistics));
     statistics -> tlb_hits = 0;
     statistics -> tlb_tries = 0;

@@ -1,26 +1,25 @@
 #ifndef Memory_h
 #define Memory_h
 
+#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include "Constants.h"
 #include "Enums.h"
+#include "PageTable.h"
 #include "Tlb.h"
-#include "Statistics.h"
+#include "PhysicalMemory.h"
 
 typedef struct Memory
 {
     enum policy_type policy;
-    int page_bits;
-    int frame_bits;
-    int offset_bits;
+    PageTable* page_table;
     Tlb* tlb;
+    PhysicalMemory* physical_memory;
 } Memory;
 
-extern Memory* global_memory;
-extern Statistics* global_statistics;
-
-Memory* memory_create(enum policy_type policy, int offset_bits, int page_bits, int frame_bits, int tlb_size);
+Memory* memory_create(enum policy_type policy);
 void memory_destroy(Memory* memory);
-uint memory_read(Memory* memory, uint memory_address);
+int memory_virtual_read(Memory* memory, int memory_address);
 
 #endif /* Memory_h */
+

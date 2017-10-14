@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		76B42D981F91EB1A0002AF3F /* Memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B42D971F91EB1A0002AF3F /* Memory.c */; };
+		76B42D9B1F91EB780002AF3F /* PageTable.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B42D9A1F91EB780002AF3F /* PageTable.c */; };
+		76B42DA01F91ECBA0002AF3F /* PhysicalMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B42D9F1F91ECBA0002AF3F /* PhysicalMemory.c */; };
+		76B42DA31F91EDAB0002AF3F /* Tlb.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B42DA21F91EDAB0002AF3F /* Tlb.c */; };
+		76B42DA51F91EF1D0002AF3F /* Statistics.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B42DA41F91EF1D0002AF3F /* Statistics.c */; };
 		76B888D51F905782009C9347 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B888D41F905782009C9347 /* main.c */; };
-		76B888DE1F9062F4009C9347 /* Queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B888DD1F9062F4009C9347 /* Queue.c */; };
-		76B888E11F906307009C9347 /* Node.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B888E01F906307009C9347 /* Node.c */; };
-		76B888E41F906352009C9347 /* Dictionary.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B888E31F906352009C9347 /* Dictionary.c */; };
-		76B888E71F907604009C9347 /* Memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B888E61F907604009C9347 /* Memory.c */; };
-		76B888EA1F907926009C9347 /* Tlb.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B888E91F907926009C9347 /* Tlb.c */; };
-		76B888F01F907FBE009C9347 /* Statistics.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B888EF1F907FBE009C9347 /* Statistics.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,21 +28,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		76B42D891F91C8DD0002AF3F /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		76B42D961F91EB1A0002AF3F /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
+		76B42D971F91EB1A0002AF3F /* Memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Memory.c; sourceTree = "<group>"; };
+		76B42D991F91EB780002AF3F /* PageTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PageTable.h; sourceTree = "<group>"; };
+		76B42D9A1F91EB780002AF3F /* PageTable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PageTable.c; sourceTree = "<group>"; };
+		76B42D9E1F91ECBA0002AF3F /* PhysicalMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhysicalMemory.h; sourceTree = "<group>"; };
+		76B42D9F1F91ECBA0002AF3F /* PhysicalMemory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PhysicalMemory.c; sourceTree = "<group>"; };
+		76B42DA11F91EDAB0002AF3F /* Tlb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tlb.h; sourceTree = "<group>"; };
+		76B42DA21F91EDAB0002AF3F /* Tlb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Tlb.c; sourceTree = "<group>"; };
+		76B42DA41F91EF1D0002AF3F /* Statistics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Statistics.c; sourceTree = "<group>"; };
 		76B888D11F905782009C9347 /* tarea3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tarea3; sourceTree = BUILT_PRODUCTS_DIR; };
 		76B888D41F905782009C9347 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		76B888DB1F9057BA009C9347 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
-		76B888DC1F9062F4009C9347 /* Queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Queue.h; sourceTree = "<group>"; };
-		76B888DD1F9062F4009C9347 /* Queue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Queue.c; sourceTree = "<group>"; };
-		76B888DF1F906307009C9347 /* Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
-		76B888E01F906307009C9347 /* Node.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Node.c; sourceTree = "<group>"; };
-		76B888E21F906352009C9347 /* Dictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dictionary.h; sourceTree = "<group>"; };
-		76B888E31F906352009C9347 /* Dictionary.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Dictionary.c; sourceTree = "<group>"; };
-		76B888E51F907604009C9347 /* Memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
-		76B888E61F907604009C9347 /* Memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Memory.c; sourceTree = "<group>"; };
-		76B888E81F907926009C9347 /* Tlb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tlb.h; sourceTree = "<group>"; };
-		76B888E91F907926009C9347 /* Tlb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Tlb.c; sourceTree = "<group>"; };
 		76B888EE1F907FBE009C9347 /* Statistics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Statistics.h; sourceTree = "<group>"; };
-		76B888EF1F907FBE009C9347 /* Statistics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Statistics.c; sourceTree = "<group>"; };
 		76B888F21F90836A009C9347 /* Enums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Enums.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -79,19 +77,18 @@
 			children = (
 				76B888D41F905782009C9347 /* main.c */,
 				76B888DB1F9057BA009C9347 /* main.h */,
-				76B888DC1F9062F4009C9347 /* Queue.h */,
-				76B888DD1F9062F4009C9347 /* Queue.c */,
-				76B888DF1F906307009C9347 /* Node.h */,
-				76B888E01F906307009C9347 /* Node.c */,
-				76B888E21F906352009C9347 /* Dictionary.h */,
-				76B888E31F906352009C9347 /* Dictionary.c */,
-				76B888E51F907604009C9347 /* Memory.h */,
-				76B888E61F907604009C9347 /* Memory.c */,
-				76B888E81F907926009C9347 /* Tlb.h */,
-				76B888E91F907926009C9347 /* Tlb.c */,
-				76B888EE1F907FBE009C9347 /* Statistics.h */,
-				76B888EF1F907FBE009C9347 /* Statistics.c */,
+				76B42D891F91C8DD0002AF3F /* Constants.h */,
 				76B888F21F90836A009C9347 /* Enums.h */,
+				76B888EE1F907FBE009C9347 /* Statistics.h */,
+				76B42DA41F91EF1D0002AF3F /* Statistics.c */,
+				76B42D961F91EB1A0002AF3F /* Memory.h */,
+				76B42D971F91EB1A0002AF3F /* Memory.c */,
+				76B42D991F91EB780002AF3F /* PageTable.h */,
+				76B42D9A1F91EB780002AF3F /* PageTable.c */,
+				76B42DA11F91EDAB0002AF3F /* Tlb.h */,
+				76B42DA21F91EDAB0002AF3F /* Tlb.c */,
+				76B42D9E1F91ECBA0002AF3F /* PhysicalMemory.h */,
+				76B42D9F1F91ECBA0002AF3F /* PhysicalMemory.c */,
 			);
 			path = tarea3;
 			sourceTree = "<group>";
@@ -153,13 +150,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76B888EA1F907926009C9347 /* Tlb.c in Sources */,
-				76B888E11F906307009C9347 /* Node.c in Sources */,
-				76B888F01F907FBE009C9347 /* Statistics.c in Sources */,
+				76B42D9B1F91EB780002AF3F /* PageTable.c in Sources */,
+				76B42D981F91EB1A0002AF3F /* Memory.c in Sources */,
+				76B42DA51F91EF1D0002AF3F /* Statistics.c in Sources */,
 				76B888D51F905782009C9347 /* main.c in Sources */,
-				76B888DE1F9062F4009C9347 /* Queue.c in Sources */,
-				76B888E71F907604009C9347 /* Memory.c in Sources */,
-				76B888E41F906352009C9347 /* Dictionary.c in Sources */,
+				76B42DA31F91EDAB0002AF3F /* Tlb.c in Sources */,
+				76B42DA01F91ECBA0002AF3F /* PhysicalMemory.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

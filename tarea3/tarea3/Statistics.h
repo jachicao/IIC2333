@@ -11,7 +11,7 @@ typedef struct Statistics
     int page_tries;
 } Statistics;
 
-Statistics* statistics_create();
+Statistics* statistics_create(void);
 void statistics_destroy(Statistics* statistics);
 
 #endif /* Statistics_h */

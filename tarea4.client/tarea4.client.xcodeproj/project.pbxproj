@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		76A0C83E1FA56D180086932C /* tarea4.client */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tarea4.client; sourceTree = BUILT_PRODUCTS_DIR; };
 		76A0C8411FA56D180086932C /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		76A0C84F1FA5C2050086932C /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				76A0C8411FA56D180086932C /* main.c */,
+				76A0C84F1FA5C2050086932C /* MessageType.h */,
 			);
 			path = tarea4.client;
 			sourceTree = "<group>";

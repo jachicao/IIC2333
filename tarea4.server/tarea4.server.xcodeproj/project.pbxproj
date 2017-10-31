@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		765911D61FA8CDA500E09656 /* ListMessage.c in Sources */ = {isa = PBXBuildFile; fileRef = 765911D51FA8CDA500E09656 /* ListMessage.c */; };
 		76A0C8261FA51AD90086932C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 76A0C8251FA51AD90086932C /* main.c */; };
+		76B9F5631FA669ED00DE9559 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B9F5621FA669ED00DE9559 /* Message.c */; };
+		76B9F5661FA66E4800DE9559 /* SharedMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B9F5651FA66E4800DE9559 /* SharedMemory.c */; };
+		76B9F5691FA673D000DE9559 /* QueueMessage.c in Sources */ = {isa = PBXBuildFile; fileRef = 76B9F5681FA673D000DE9559 /* QueueMessage.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,10 +27,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		765911D41FA8CDA500E09656 /* ListMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ListMessage.h; sourceTree = "<group>"; };
+		765911D51FA8CDA500E09656 /* ListMessage.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ListMessage.c; sourceTree = "<group>"; };
 		76A0C8221FA51AD90086932C /* tarea4.server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tarea4.server; sourceTree = BUILT_PRODUCTS_DIR; };
 		76A0C8251FA51AD90086932C /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		76A0C82C1FA51BDE0086932C /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
 		76A0C84E1FA591050086932C /* ChessPieceType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChessPieceType.h; sourceTree = "<group>"; };
+		76A0C8501FA5C68B0086932C /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
+		76B9F5611FA669ED00DE9559 /* Message.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		76B9F5621FA669ED00DE9559 /* Message.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
+		76B9F5641FA66E4800DE9559 /* SharedMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
+		76B9F5651FA66E4800DE9559 /* SharedMemory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SharedMemory.c; sourceTree = "<group>"; };
+		76B9F5671FA673D000DE9559 /* QueueMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueueMessage.h; sourceTree = "<group>"; };
+		76B9F5681FA673D000DE9559 /* QueueMessage.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = QueueMessage.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,8 +72,16 @@
 			isa = PBXGroup;
 			children = (
 				76A0C8251FA51AD90086932C /* main.c */,
-				76A0C82C1FA51BDE0086932C /* MessageType.h */,
 				76A0C84E1FA591050086932C /* ChessPieceType.h */,
+				76A0C8501FA5C68B0086932C /* MessageType.h */,
+				76B9F5611FA669ED00DE9559 /* Message.h */,
+				76B9F5621FA669ED00DE9559 /* Message.c */,
+				76B9F5641FA66E4800DE9559 /* SharedMemory.h */,
+				76B9F5651FA66E4800DE9559 /* SharedMemory.c */,
+				76B9F5671FA673D000DE9559 /* QueueMessage.h */,
+				76B9F5681FA673D000DE9559 /* QueueMessage.c */,
+				765911D41FA8CDA500E09656 /* ListMessage.h */,
+				765911D51FA8CDA500E09656 /* ListMessage.c */,
 			);
 			path = tarea4.server;
 			sourceTree = "<group>";
@@ -123,7 +143,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				765911D61FA8CDA500E09656 /* ListMessage.c in Sources */,
 				76A0C8261FA51AD90086932C /* main.c in Sources */,
+				76B9F5691FA673D000DE9559 /* QueueMessage.c in Sources */,
+				76B9F5661FA66E4800DE9559 /* SharedMemory.c in Sources */,
+				76B9F5631FA669ED00DE9559 /* Message.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

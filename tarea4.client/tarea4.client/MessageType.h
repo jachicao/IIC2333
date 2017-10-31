@@ -21,4 +21,3 @@ enum MessageType {
 };
 
 #endif /* MessageType_h */
-
